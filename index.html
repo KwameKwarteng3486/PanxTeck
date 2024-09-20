@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #0b0c10;
+            color: #66fcf1;
+            font-family: 'Poppins', sans-serif;
+        }
+        .navbar {
+            background-color: #1f2833;
+        }
+        .navbar-brand {
+            color: #66fcf1;
+        }
+        .navbar-nav .nav-link {
+            color: #66fcf1;
+        }
+        .navbar-toggler-icon {
+            background-color: #66fcf1;
+        }
+        .container_main {
+            text-align: center;
+            margin-top: 150px;
+        }
+        @keyframes rotate-colors {
+    0% {
+        border-color: #66fcf1; /* Starting color */
+    }
+    25% {
+        border-color: #45a29e; /* Second color */
+    }
+    50% {
+        border-color: #1f2833; /* Third color */
+    }
+    75% {
+        border-color: #c5c6c7; /* Fourth color */
+    }
+    100% {
+        border-color: #66fcf1; /* Back to starting color */
+    }
+}
+
+.profile-pic {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 10px solid #66fcf1; /* Initial color */
+    box-shadow: 0 0 30px rgba(102, 252, 241, 0.6);
+    animation: rotate-colors 5s linear infinite;
+}
+        .name-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #45a29e;
+        }
+        .social-icons i {
+            font-size: 1.5rem;
+            color: #66fcf1;
+            padding: 0 15px;
+            transition: color 0.3s;
+        }
+        .social-icons i:hover {
+            color: #45a29e;
+        }
+
+        /* Custom navbar for small screens */
+        .custom-navbar {
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .custom-navbar {
+                display: block;
+                background-color: #1f2833;
+                color: #66fcf1;
+                padding: 15px;
+            }
+            .default-navbar {
+                display: none;
+            }
+            .offcanvas{
+                background-color: #ffffff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Default Navbar for larger screens -->
+    <nav class="navbar navbar-expand-lg fixed-top default-navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">PanxTech.web</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="project.html">Projects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Custom Navbar for small screens -->
+    <div class="custom-navbar">
+        <nav class="navbar fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">PanxTech.web</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">PanxTech</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="project.html">Projects</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="#">Contact</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Others
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <form class="d-flex mt-3" role="search">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                            <button class="btn btn-outline-success" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container_main">
+        <div>
+            <img src="image/img.JPG" alt="Profile Picture" class="profile-pic">
+        </div>
+        <h1 class="name-title">Hello, It's Me <span>Kwame Kwarteng</span></h1>
+        <p class="subtitle">And I'm a Web Developer</p>
+        <p>I'm a web Designer with extensive experience for over 3 years. My expertise is to create and design websites, frontend design, and much more...</p>
+        <div class="social-icons">
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-twitter"></i></a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
