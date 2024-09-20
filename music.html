@@ -37,6 +37,10 @@ button {
     padding: 10px 20px;
     margin: 10px;
 }
+
+.loading-spinner {
+    display: none;
+}
 </style>
 <body>
     <a href="project.html" class="back-button position-absolute top-0 fs-2">&#x2190;</a>
@@ -46,6 +50,11 @@ button {
             <input type="text" id="artist" placeholder="Artist Name">
             <input type="text" id="song" placeholder="Song Title">
             <button id="fetch-lyrics">Get Lyrics</button>
+            <div id="loading-spinner" class="loading-spinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
         </div>
         <div>
             <input type="file" id="audio-file" accept="audio/*">
@@ -57,158 +66,167 @@ button {
         <button id="download-lyrics" style="display:none;">Download Lyrics</button>
     </div>
 
-    
     <script>
     document.getElementById('fetch-lyrics').addEventListener('click', async () => {
-    const artist = document.getElementById('artist').value;
-    const song = document.getElementById('song').value;
+        const artist = document.getElementById('artist').value;
+        const song = document.getElementById('song').value;
+        const fetchButton = document.getElementById('fetch-lyrics');
+        const spinner = document.getElementById('loading-spinner');
 
-    if (!artist || !song) {
-        alert('Please enter both artist and song title');
-        return;
-    }
-
-    try {
-        const response = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`);
-        if (!response.ok) {
-            throw new Error('Lyrics not found');
+        if (!artist || !song) {
+            alert('Please enter both artist and song title');
+            return;
         }
 
-        const data = await response.json();
-        document.getElementById('lyrics').innerText = data.lyrics;
-        document.getElementById('download-lyrics').style.display = 'block';
-    } catch (error) {
-        document.getElementById('lyrics').innerText = error.message;
-        document.getElementById('download-lyrics').style.display = 'none';
-    }
-});
+        fetchButton.disabled = true;
+        fetchButton.innerText = 'Loading...';
+        spinner.style.display = 'inline-block';
 
-document.getElementById('upload-audio').addEventListener('click', async () => {
-    const fileInput = document.getElementById('audio-file');
-    const uploadStatus = document.getElementById('upload-status');
-
-    if (!fileInput.files.length) {
-        alert('Please select an audio file');
-        return;
-    }
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    reader.onload = async (event) => {
-        const arrayBuffer = event.target.result;
-        const base64Audio = arrayBufferToBase64(arrayBuffer);
-
-        // Call your song recognition API here
-        const songInfo = await recognizeSong(base64Audio);
-        if (songInfo) {
-            const { artist, title } = songInfo;
-
-            // Create an audio element and play the selected file
-            const audioElement = new Audio(URL.createObjectURL(file));
-            document.getElementById('audio-container').innerHTML = '';
-            document.getElementById('audio-container').appendChild(audioElement);
-            audioElement.play();
-
-            const response = await fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`);
-            if (response.ok) {
-                const data = await response.json();
-                const lyricsElement = document.getElementById('lyrics');
-                lyricsElement.innerHTML = '';
-                
-                const sentences = data.lyrics.split('\n');
-                sentences.forEach((sentence, index) => {
-                    const span = document.createElement('span');
-                    span.id = 'sentence-' + index;
-                    span.innerText = sentence;
-                    lyricsElement.appendChild(span);
-                    lyricsElement.appendChild(document.createElement('br'));
-                });
-
-                // Calculate duration per sentence for simple synchronization
-                const durationPerSentence = audioElement.duration / sentences.length;
-                
-                audioElement.ontimeupdate = () => {
-                    const currentTime = audioElement.currentTime;
-                    const currentIndex = Math.floor(currentTime / durationPerSentence);
-                    document.querySelectorAll('#lyrics span').forEach((span, index) => {
-                        if (index === currentIndex) {
-                            span.classList.add('current-sentence');
-                        } else {
-                            span.classList.remove('current-sentence');
-                        }
-                    });
-                };
-                document.getElementById('download-lyrics').style.display = 'block';
-            } else {
-                document.getElementById('lyrics').innerText = 'Lyrics not found';
-                document.getElementById('download-lyrics').style.display = 'none';
+        try {
+            const response = await fetch(`https://api.lyrics.ovh/v1/${artist}/${song}`);
+            if (!response.ok) {
+                throw new Error('Lyrics not found');
             }
-        } else {
-            document.getElementById('lyrics').innerText = 'Song not recognized';
+
+            const data = await response.json();
+            document.getElementById('lyrics').innerText = data.lyrics;
+            document.getElementById('download-lyrics').style.display = 'block';
+        } catch (error) {
+            document.getElementById('lyrics').innerText = error.message;
             document.getElementById('download-lyrics').style.display = 'none';
+        } finally {
+            fetchButton.disabled = false;
+            fetchButton.innerText = 'Get Lyrics';
+            spinner.style.display = 'none';
         }
-    };
-
-    reader.onerror = (error) => {
-        uploadStatus.innerText = 'Failed to read file';
-        console.error('File reading error:', error);
-    };
-
-    reader.readAsArrayBuffer(file);
-    uploadStatus.innerText = 'Uploading...';
-});
-
-function arrayBufferToBase64(buffer) {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-}
-
-async function recognizeSong(base64Audio) {
-    // Replace with your song recognition API call
-    // Example using AudD
-
-    const apiKey = '0467fe1b7dbdbc2f8d1bdd22f7c00f77';  // Replace with your API key
-    const response = await fetch('https://api.audd.io/', {
-        method: 'POST',
-        body: JSON.stringify({
-            api_token: apiKey,
-            audio: base64Audio,
-            return: 'apple_music,spotify',
-        }),
-        headers: { 'Content-Type': 'application/json' },
     });
 
-    if (response.ok) {
-        const data = await response.json();
-        if (data.result) {
-            return {
-                artist: data.result.artist,
-                title: data.result.title,
-            };
+    document.getElementById('upload-audio').addEventListener('click', async () => {
+        const fileInput = document.getElementById('audio-file');
+        const uploadStatus = document.getElementById('upload-status');
+
+        if (!fileInput.files.length) {
+            alert('Please select an audio file');
+            return;
         }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async (event) => {
+            const arrayBuffer = event.target.result;
+            const base64Audio = arrayBufferToBase64(arrayBuffer);
+
+            // Call your song recognition API here
+            const songInfo = await recognizeSong(base64Audio);
+            if (songInfo) {
+                const { artist, title } = songInfo;
+
+                // Create an audio element and play the selected file
+                const audioElement = new Audio(URL.createObjectURL(file));
+                document.getElementById('audio-container').innerHTML = '';
+                document.getElementById('audio-container').appendChild(audioElement);
+                audioElement.play();
+
+                const response = await fetch(`https://api.lyrics.ovh/v1/${artist}/${title}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const lyricsElement = document.getElementById('lyrics');
+                    lyricsElement.innerHTML = '';
+
+                    const sentences = data.lyrics.split('\n');
+                    sentences.forEach((sentence, index) => {
+                        const span = document.createElement('span');
+                        span.id = 'sentence-' + index;
+                        span.innerText = sentence;
+                        lyricsElement.appendChild(span);
+                        lyricsElement.appendChild(document.createElement('br'));
+                    });
+
+                    // Calculate duration per sentence for simple synchronization
+                    const durationPerSentence = audioElement.duration / sentences.length;
+
+                    audioElement.ontimeupdate = () => {
+                        const currentTime = audioElement.currentTime;
+                        const currentIndex = Math.floor(currentTime / durationPerSentence);
+                        document.querySelectorAll('#lyrics span').forEach((span, index) => {
+                            if (index === currentIndex) {
+                                span.classList.add('current-sentence');
+                            } else {
+                                span.classList.remove('current-sentence');
+                            }
+                        });
+                    };
+                    document.getElementById('download-lyrics').style.display = 'block';
+                } else {
+                    document.getElementById('lyrics').innerText = 'Lyrics not found';
+                    document.getElementById('download-lyrics').style.display = 'none';
+                }
+            } else {
+                document.getElementById('lyrics').innerText = 'Song not recognized';
+                document.getElementById('download-lyrics').style.display = 'none';
+            }
+        };
+
+        reader.onerror = (error) => {
+            uploadStatus.innerText = 'Failed to read file';
+            console.error('File reading error:', error);
+        };
+
+        reader.readAsArrayBuffer(file);
+        uploadStatus.innerText = 'Uploading...';
+    });
+
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
     }
 
-    return null;
-}
+    async function recognizeSong(base64Audio) {
+        // Replace with your song recognition API call
+        // Example using AudD
 
-document.getElementById('download-lyrics').addEventListener('click', () => {
-    const lyricsText = document.getElementById('lyrics').innerText;
-    const blob = new Blob([lyricsText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'lyrics.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-});
-</script>
+        const apiKey = '0467fe1b7dbdbc2f8d1bdd22f7c00f77';  // Replace with your API key
+        const response = await fetch('https://api.audd.io/', {
+            method: 'POST',
+            body: JSON.stringify({
+                api_token: apiKey,
+                audio: base64Audio,
+                return: 'apple_music,spotify',
+            }),
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            if (data.result) {
+                return {
+                    artist: data.result.artist,
+                    title: data.result.title,
+                };
+            }
+        }
+
+        return null;
+    }
+
+    document.getElementById('download-lyrics').addEventListener('click', () => {
+        const lyricsText = document.getElementById('lyrics').innerText;
+        const blob = new Blob([lyricsText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'lyrics.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+    </script>
 </body>
 </html>
