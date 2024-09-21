@@ -10,7 +10,7 @@
     <style>
         body {
             background-color: #0b0c10;
-            color: #66fcf1;
+            color: #ffffff;
             font-family: 'Poppins', sans-serif;
             height: 100vh;
             display: flex;
@@ -32,7 +32,7 @@
         }
         .container_main {
             text-align: center;
-            margin-top: 150px;
+            margin-top: 100px;
         }
         .section-content {
             display: none;
@@ -52,16 +52,16 @@
         border-color: #66ccfc; /* Starting color */
     }
     25% {
-        border-color: #65f5ee; /* Second color */
+        border-color: cyan; /* Second color */
     }
     50% {
-        border-color: #3c5c83; /* Third color */
+        border-color: white; /* Third color */
     }
     75% {
-        border-color: #c5c6c7; /* Fourth color */
+        border-color: #41474d; /* Fourth color */
     }
     100% {
-        border-color: #66fcf1; /* Back to starting color */
+        border-color: magenta; /* Back to starting color */
     }
 }
 
@@ -72,6 +72,7 @@
     border: 10px solid #66fcf1; /* Initial color */
     box-shadow: 0 0 30px rgba(102, 252, 241, 0.6);
     animation: rotate-colors 5s linear infinite;
+    
 }
         .name-title {
             font-size: 2.5rem;
@@ -82,10 +83,9 @@
             color: #45a29e;
         }
         .social-icons i {
-            font-size: 1.5rem;
-            color: #66a7fc;
-            padding: 0 15px;
-            transition: color 0.3s;
+            font-size: 30px;
+            margin: 0 10px;
+            transition: color 0.3s ease;
         }
         .social-icons i:hover {
             color: #45a29e;
@@ -96,6 +96,23 @@
             display: none;
         }
 
+        .custom-btn {
+    background-color: #00FFFF; /* Light cyan color */
+    color: #000; /* Text color */
+    border-radius: 50px;
+    padding: 10px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 30px 10px rgba(0, 255, 255, 0.6); /* High shadow effect */
+    transition: all 0.3s ease;
+}
+
+.custom-btn:hover {
+    box-shadow: 0px 0px 40px 15px rgba(0, 255, 255, 0.8); /* Stronger shadow on hover */
+    cursor: pointer;
+}
         @media (max-width: 991px) {
             .custom-navbar {
                 display: block;
@@ -166,7 +183,7 @@
                                 <a class="nav-link text-dark" id="toggle-contact" href="#">Contact</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" id="toggle-about" h href="#">About Me</a>
+                                <a class="nav-link text-dark"  href="#">About Me</a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -194,14 +211,15 @@
         <div>
             <img src="image/img.JPG" alt="Profile Picture" class="profile-pic">
         </div>
-        <h1 class="name-title">Hello, It's Me <span>Kwame Kwarteng</span></h1>
+        <h1>Hello, It's Me <span style="color: #00ffea;">Kwame Kwarteng</span></h1>
         <p class="subtitle">And I'm a Web Developer</p>
         <p>I'm a web Designer with extensive experience for over 3 years. 
         My expertise is to create and design websites, frontend design, and much more...</p>
         <div class="social-icons">
             <a href="#"><i class="bi bi-facebook"></i></a>
-            <a href="#"><i class="bi bi-instagram"></i></a>
-            <a href="#"><i class="bi bi-twitter"></i></a>
+                <a href="#"><i class="bi bi-instagram"></i></a>
+                <a href="#"><i class="bi bi-whatsapp"></i></a>
+                <a href="#"><i class="bi bi-github"></i></a>
         </div>
     </div>
 
@@ -222,7 +240,8 @@
             web development and IT, ensuring that every project I work on is both cutting-edge 
             and reliable.
     </p>
-    </div>
+    </div><br>
+    <a href="#" id="toggle-about" class="btn custom-btn">More About Me</a>
 
     <!-- Contact Us Section (Initially hidden) -->
     <div id="contact-us-section" class="section-content">
