@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrow Follow and Path Trace</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #arrow {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: red;
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      transform: rotate(0deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center">Path Tracing Arrow</h1>
+  </div>
+  
+  <canvas id="canvas"></canvas>
+  <div id="arrow"></div>
+
+  <script>
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const arrow = document.getElementById('arrow');
+
+// Set canvas dimensions
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let isFirstMove = true;
+let lastX = window.innerWidth / 2;
+let lastY = window.innerHeight / 2;
+
+// Initial arrow position in the center of the screen
+arrow.style.left = `${lastX - 25}px`; 
+arrow.style.top = `${lastY - 25}px`;
+
+// Function to draw path automatically
+function drawPath(newX, newY) {
+  // Draw path line
+  if (!isFirstMove) {
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(newX, newY);
+    ctx.strokeStyle = 'blue';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  
+  // Update arrow position and rotation
+  arrow.style.left = `${newX - 25}px`;  
+  arrow.style.top = `${newY - 25}px`;
+
+  // Calculate angle and rotate arrow towards movement direction
+  const angle = Math.atan2(newY - lastY, newX - lastX);
+  arrow.style.transform = `rotate(${angle}rad)`;
+
+  // Update the last position for the next move
+  lastX = newX;
+  lastY = newY;
+  isFirstMove = false;
+}
+
+// Handle device motion for movement
+if (window.DeviceMotionEvent) {
+  window.addEventListener('devicemotion', (event) => {
+    const acceleration = event.accelerationIncludingGravity;
+
+    // Update the arrow's position based on the device's movement
+    const newX = lastX + acceleration.x * 5;  // Multiply by 5 to amplify movement
+    const newY = lastY + acceleration.y * 5;
+
+    // Keep movement within bounds
+    if (newX > 0 && newX < window.innerWidth && newY > 0 && newY < window.innerHeight) {
+      drawPath(newX, newY);
+    }
+  });
+}
+
+// Handle device orientation for arrow rotation
+if (window.DeviceOrientationEvent) {
+  window.addEventListener('deviceorientation', (event) => {
+    const alpha = event.alpha;  // Rotation around z-axis
+    arrow.style.transform = `rotate(${alpha}deg)`;
+  });
+}
+
+// Resize canvas on window resize
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+</script>
+</body>
+</html>
