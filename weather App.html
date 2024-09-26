@@ -124,30 +124,49 @@ button {
                     <div class="weather-info text-dark" id="weatherInfo"></div>
                     <div class="forecast row" id="forecast"></div>
                 </div>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h2 class="text-light">Select a City in Ghana</h2>
+                        <div id="city-buttons" class="d-flex flex-wrap justify-content-center">
+                            <button class="btn btn-primary m-2" onclick="getWeather('Accra')">Accra</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Kumasi')">Kumasi</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Tamale')">Tamale</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Takoradi')">Takoradi</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Cape Coast')">Cape Coast</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Koforidua')">Koforidua</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Ho')">Ho</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Sunyani')">Sunyani</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Bolgatanga')">Bolgatanga</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Wa')">Wa</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Techiman')">Techiman</button>
+                            <button class="btn btn-primary m-2" onclick="getWeather('Sefwi Wiawso')">Sefwi Wiawso</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
 
     <script>
-   const apiKey = 'cba900866d2bfc4785e4c217a5a73ce5'; // Replace with your OpenWeatherMap API key
+  const apiKey = 'cba900866d2bfc4785e4c217a5a73ce5'; // Replace with your OpenWeatherMap API key
 
-function getWeather() {
-    const city = document.getElementById('city').value;
+function getWeather(city = null) {
     const weatherInfo = document.getElementById('weatherInfo');
     const forecastDiv = document.getElementById('forecast');
     const errorDiv = document.getElementById('error');
-    
+    const inputCity = city || document.getElementById('city').value;
+
     weatherInfo.innerHTML = '';  // Clear previous info
     forecastDiv.innerHTML = '';  // Clear previous forecast
     errorDiv.innerHTML = '';     // Clear any error message
 
-    if (!city) {
+    if (!inputCity) {
         errorDiv.innerHTML = "Please enter a city.";
         return;
     }
 
-    const cityQuery = `${city}, GH`; // Use city with country code
+    const cityQuery = `${inputCity}, GH`; // Use city with country code
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${cityQuery}&appid=${apiKey}&units=metric`;
     const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityQuery}&appid=${apiKey}&units=metric`;
 
