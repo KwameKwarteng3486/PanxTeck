@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Payment Form with Receipt</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .receipt {
+        width: 50%;
+      display: none;
+      margin-top: 20px;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      background-color: #63a7eb;
+      border-radius: 5px;
+    }
+    .receipt-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .payment-form{
+      width: 50%;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: #e9ecef;
+      border-radius: 5px;
+      margin: auto;
+    }
+    .instructions {
+      width: 50%;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      background-color: #e9ecef;
+      border-radius: 5px;
+      margin: auto;
+    }
+    @media (max-width: 768px) {
+    .instructions {
+      width: 100%;
+      
+    }
+    .payment-form{
+        width: 100%;
+    }
+    .receipt{
+        width: 100%;
+    }
+
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <!-- Payment Instructions -->
+    <div class="instructions">
+      <h4>Payment Instructions</h4>
+      <p>Please send the payment via Mobile Money to:</p>
+      <ul class="list-unstyled">
+        <li><strong>Mobile Money Number:</strong> 0543519075</li>
+        <li><strong>Name:</strong> Kwame Kwarteng</li>
+      </ul>
+      <button id="toggleFormBtn" class="btn btn-primary">Toggle Payment Form</button>
+      <p>After sending the payment, fill in the form below to confirm.</p>
+    </div>
+
+    <!-- Payment Form -->
+    <div class="payment-form mt-4 p-4 bg-light border rounded" style="display:none;">
+      <h3 class="mb-3">Confirm Payment</h3>
+      <form id="paymentForm">
+        <div class="mb-3">
+          <label for="fullName" class="form-label">Full Name</label>
+          <input type="text" class="form-control" id="fullName" required>
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">Email Address</label>
+          <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="mb-3">
+          <label for="amount" class="form-label">Amount Sent</label>
+          <input type="number" class="form-control" id="amount" required>
+        </div>
+        <button type="submit" class="btn btn-success">Submit Payment</button>
+      </form>
+    </div>
+
+    <!-- Receipt -->
+    <div class="receipt" id="receipt">
+      <h4 class="receipt-header">Payment Receipt</h4>
+      <p><strong>Full Name:</strong> <span id="receiptName"></span></p>
+      <p><strong>Email:</strong> <span id="receiptEmail"></span></p>
+      <p><strong>Amount Paid:</strong> $<span id="receiptAmount"></span></p>
+      <p><strong>Date and Time:</strong> <span id="receiptDateTime"></span></p>
+      <button id="saveReceiptBtn" class="btn btn-secondary mt-3">Save Receipt</button>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS and dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+
+  <!-- Custom JavaScript -->
+  <script>
+    // Toggle Payment Form
+    document.getElementById('toggleFormBtn').addEventListener('click', function() {
+      const paymentForm = document.querySelector('.payment-form');
+      paymentForm.style.display = paymentForm.style.display === 'none' ? 'block' : 'none';
+    });
+
+    // Handle Form Submission
+    document.getElementById('paymentForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      // Get form values
+      const fullName = document.getElementById('fullName').value;
+      const email = document.getElementById('email').value;
+      const amount = document.getElementById('amount').value;
+
+      // Get current date and time
+      const dateTime = new Date().toLocaleString();
+
+      // Display receipt
+      document.getElementById('receiptName').innerText = fullName;
+      document.getElementById('receiptEmail').innerText = email;
+      document.getElementById('receiptAmount').innerText = amount;
+      document.getElementById('receiptDateTime').innerText = dateTime;
+
+      // Hide form and show receipt
+      document.querySelector('.payment-form').style.display = 'none';
+      document.querySelector('.receipt').style.display = 'block';
+    });
+
+    // Save Receipt as PDF
+    document.getElementById('saveReceiptBtn').addEventListener('click', function() {
+      const receipt = document.getElementById('receipt');
+
+      // Use html2canvas to take a screenshot of the receipt
+      html2canvas(receipt).then(function(canvas) {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF();
+
+        // Add image to PDF
+        pdf.addImage(imgData, 'PNG', 10, 10);
+        pdf.save('receipt.pdf'); // Save PDF
+      });
+    });
+  </script>
+</body>
+</html>
