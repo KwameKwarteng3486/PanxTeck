@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-image: url(image/bg1.PNG);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        /* General Container Styling */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #00000098;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Card Styling */
+.card {
+    text-align: center;
+    padding: 30px;
+    background: #333333c5;
+    border: 1px solid white;
+}
+
+.card-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Button Customization */
+.btn {
+    margin: 0 auto;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 25px;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.btn-custom {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+.btn-custom:hover {
+    background-color: #45a049;
+}
+
+.btn-secondary {
+    background-color: #777;
+    color: white;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #555;
+}
+
+/* Image Upload Section */
+#uploadSection {
+    margin-top: 20px;
+}
+
+.image-preview {
+    margin-top: 20px;
+    border: 2px dashed #ffffff;
+    padding: 30px;
+    background-color: #0000008c;
+    border-radius: 10px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Loading and Error Messages */
+.loading-text, .error-text {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #ff4c4c;
+    display: none;
+}
+
+/* Result Section */
+#resultSection img {
+    max-width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+#resultSection {
+    margin-top: 20px;
+}
+
+.color-picker {
+    margin-top: 20px;
+}
+
+#colorPicker {
+    width: 100px;
+    height: 40px;
+    border: none;
+    cursor: pointer;
+}
+
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .image-preview {
+        height: 150px;
+    }
+
+    #colorPicker {
+        width: 80px;
+        height: 30px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Main card -->
+        <div class="card">
+            <h2 class="card-title fw-bold text-danger">PanxTech Removal</h2>
+            <p class="fw-bold text-primary">Background Remover</p>
+
+            <!-- Image upload section -->
+            <div id="uploadSection">
+                <input type="file" id="imageInput" accept="image/*" class="form-control" style="display: none;" />
+                <button class="btn btn-custom text-center" id="selectImageButton">Select Image</button>
+
+                <!-- Image Preview -->
+                <div class="image-preview">
+                    <img src="image/img.JPG" id="previewImage" alt="Selected Image" />
+                </div>
+
+                <!-- Loading and Error messages -->
+                <p class="loading-text" id="loadingText">Removing background...</p>
+                <p class="error-text" id="errorText">Failed to remove background. Please try again.</p>
+            </div>
+
+            <!-- Result section (Initially Hidden) -->
+            <div id="resultSection" style="display: none;">
+                <img id="outputImage" alt="Processed Image" />
+
+                <!-- Action buttons -->
+                <button id="retryButton" class="btn btn-secondary">Retry</button>
+                <button id="saveButton" class="btn btn-custom">Save Image</button>
+                <button id="backButton" class="btn btn-secondary">Upload Another Image</button>
+
+                <!-- Color Picker -->
+                <div class="color-picker" id="colorPickerSection">
+                    <label for="colorPicker">Pick a Background Color:</label>
+                    <input type="color" id="colorPicker" value="#ffffff">
+                    <button class="btn btn-secondary text-center" id="applyColorButton">Apply Color</button>
+                </div>
+                <canvas id="imageCanvas" style="display: none;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+      let processedImageBlob = null; // Store the processed image
+  
+      // Handle the image selection button click
+      document.getElementById('selectImageButton').addEventListener('click', () => {
+          document.getElementById('imageInput').click(); // Trigger the hidden file input
+      });
+  
+      // Show the selected image preview before background removal
+      document.getElementById('imageInput').addEventListener('change', function() {
+          const imageFile = this.files[0];
+          if (imageFile) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  document.getElementById('previewImage').src = e.target.result;
+                  document.querySelector('.image-preview').style.display = 'block';
+              };
+              reader.readAsDataURL(imageFile);
+  
+              // Call the function to remove the background
+              removeBackground(imageFile);
+          }
+      });
+  
+      // Function to remove the background using remove.bg API
+      function removeBackground(imageFile) {
+          document.getElementById('loadingText').style.display = 'block'; // Show loading text
+          document.getElementById('errorText').style.display = 'none'; // Hide error message
+          processedImageBlob = null; // Reset processed image
+  
+          const apiKey = 'XL4vvkXtjrGhkExX8gYUHrTi';
+          const formData = new FormData();
+          formData.append('image_file', imageFile);
+  
+          fetch('https://api.remove.bg/v1.0/removebg', {
+              method: 'POST',
+              headers: {
+                  'X-Api-Key': apiKey
+              },
+              body: formData
+          })
+          .then(response => response.blob())
+          .then(data => {
+              const imageUrl = URL.createObjectURL(data);
+              processedImageBlob = data; // Store the processed image
+  
+              document.getElementById('outputImage').src = imageUrl;
+              document.getElementById('loadingText').style.display = 'none'; // Hide loading text
+  
+              // Toggle views
+              document.getElementById('uploadSection').style.display = 'none';
+              document.getElementById('resultSection').style.display = 'block';
+              document.getElementById('outputImage').style.display = 'block';
+              document.getElementById('saveButton').style.display = 'block';
+              document.getElementById('colorPickerSection').style.display = 'block'; // Show color picker
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              document.getElementById('loadingText').style.display = 'none'; // Hide loading text
+              document.getElementById('errorText').style.display = 'block'; // Show error message
+              document.getElementById('retryButton').style.display = 'block'; // Show retry button
+          });
+      }
+  
+      // Handle the "Retry" button click
+      document.getElementById('retryButton').addEventListener('click', () => {
+          const imageFile = document.getElementById('imageInput').files[0];
+          if (imageFile) {
+              removeBackground(imageFile); // Retry background removal
+          }
+      });
+  
+      // Handle the "Upload Another Image" button click
+      document.getElementById('backButton').addEventListener('click', () => {
+          document.getElementById('resultSection').style.display = 'none'; // Hide the result section
+          document.getElementById('uploadSection').style.display = 'block'; // Show the upload section
+          document.getElementById('outputImage').src = ''; // Clear the processed image
+          document.querySelector('.image-preview').style.display = 'none'; // Hide the preview
+          document.getElementById('colorPickerSection').style.display = 'none'; // Hide color picker
+      });
+  
+      // Handle the "Apply Color" button click
+      document.getElementById('applyColorButton').addEventListener ('click', () => {
+          const selectedColor = document.getElementById('colorPicker').value;
+          document.getElementById('outputImage').style.backgroundColor = selectedColor;
+  
+          // Create a canvas and apply the color as the background
+          applyColorToImage(selectedColor);
+      });
+  
+      // Function to apply background color and prepare for saving
+      function applyColorToImage(selectedColor) {
+          const outputImage = document.getElementById('outputImage');
+          const canvas = document.getElementById('imageCanvas');
+          const ctx = canvas.getContext('2d');
+  
+          // Set canvas dimensions to match the image
+          canvas.width = outputImage.naturalWidth;
+          canvas.height = outputImage.naturalHeight;
+  
+          // Fill canvas with the selected background color
+          ctx.fillStyle = selectedColor;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+          // Draw the processed image on top
+          const img = new Image();
+          img.src = outputImage.src;
+          img.onload = () => {
+              ctx.drawImage(img, 0, 0);
+  
+              // Convert the canvas content to a blob for saving
+              canvas.toBlob(function(blob) {
+                  processedImageBlob = blob; // Update the blob for saving
+              }, 'image/png');
+          };
+      }
+  
+      // Handle the "Save Image" button click
+      document.getElementById('saveButton').addEventListener('click', () => {
+          if (processedImageBlob) {
+              const link = document.createElement('a');
+              link.href = URL.createObjectURL(processedImageBlob);
+              link.download = 'background-colored-image.png';
+              link.click();
+          }
+      });
+  
+    </script>
+
+</body>
+</html>
+
