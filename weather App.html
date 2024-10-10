@@ -3,177 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Receipt Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .receipt-header {
+            background-color: #f0f4ff;
+            padding: 20px;
+            text-align: center;
+        }
+        .receipt-number {
+            text-align: right;
+        }
+        .section-title {
+            background-color: #e1e5f2;
+            padding: 10px;
+        }
+        .signature {
+            margin-top: 30px;
+            border-top: 1px solid #000;
+            width: 150px;
+        }
+        .total {
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        .toggle-section {
+            display: none;
+        }
+    </style>
 </head>
-<style>
-
-body {
-    background-color: #3a3a3a;
-    color: white;
-    font-family: Arial, sans-serif;
-}
-
-.weather-app {
-    margin-top: 50px;
-}
-
-.weather-card {
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-    position: relative;
-}
-
-#rain-animation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('rain.gif'); /* Add rain gif here */
-    background-size: cover;
-    opacity: 0;
-    z-index: 1;
-}
-
-.temperature {
-    font-size: 60px;
-}
-
-#forecast {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.forecast-card {
-    width: 60px;
-    text-align: center;
-}
-
-.forecast-card img {
-    width: 40px;
-    height: 40px;
-}
-
-/* Rain animation */
-@keyframes rain {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
-</style>
 <body>
 
-<div class="container text-center weather-app">
-    <div class="weather-card">
-        <div id="rain-animation"></div>
-        <h2 id="location">Loading...</h2>
-        <div id="temperature" class="temperature">--°</div>
-        <div id="condition">--</div>
-        <div class="high-low">
-            H: <span id="high-temp">--</span>° L: <span id="low-temp">--</span>°
+<div class="container">
+    <!-- Form Section -->
+    <div id="form-section">
+        <h2 class="mt-4">Fill in the Receipt Details</h2>
+        <form id="receiptForm">
+            <h5 class="section-title">RECEIVED FROM</h5>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" class="form-control" id="phone" placeholder="Enter phone number" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" class="form-control" id="address" placeholder="Enter address" required>
+            </div>
+
+            <h5 class="section-title">ORDER DETAILS</h5>
+            <div class="form-group">
+                <label for="description1">Item 1 Description</label>
+                <input type="text" class="form-control" id="description1" placeholder="e.g., Food $10.00 x 2" required>
+            </div>
+            <div class="form-group">
+                <label for="amount1">Item 1 Amount</label>
+                <input type="number" class="form-control" id="amount1" placeholder="Enter amount" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description2">Item 2 Description</label>
+                <input type="text" class="form-control" id="description2" placeholder="e.g., Pillow $5.00 x 10" required>
+            </div>
+            <div class="form-group">
+                <label for="amount2">Item 2 Amount</label>
+                <input type="number" class="form-control" id="amount2" placeholder="Enter amount" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description3">Item 3 Description</label>
+                <input type="text" class="form-control" id="description3" placeholder="e.g., Wine $12.00 x 20" required>
+            </div>
+            <div class="form-group">
+                <label for="amount3">Item 3 Amount</label>
+                <input type="number" class="form-control" id="amount3" placeholder="Enter amount" required>
+            </div>
+
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <input type="text" class="form-control" id="paymentMethod" placeholder="Enter payment method" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generate Receipt</button>
+        </form>
+    </div>
+
+    <!-- Receipt Preview Section -->
+    <div id="receipt-section" class="toggle-section">
+        <div class="receipt-header">
+            <h1>Receipt Book</h1>
         </div>
-        <div id="forecast-text">Fetching forecast...</div>
-        <div class="forecast">
-            <div id="forecast" class="forecast-cards"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="section-title">RECEIVED FROM</h5>
+                <p><strong>Name:</strong> <span id="r-name"></span></p>
+                <p><strong>Phone Number:</strong> <span id="r-phone"></span></p>
+                <p><strong>Email:</strong> <span id="r-email"></span></p>
+                <p><strong>Address:</strong> <span id="r-address"></span></p>
+            </div>
+            <div class="col-md-6 receipt-number">
+                <p><strong>No:</strong> R-00125</p>
+                <p><strong>Date:</strong> <span id="r-date"></span></p>
+            </div>
         </div>
+
+        <h5 class="section-title">ORDER DETAILS</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td id="r-description1"></td>
+                    <td id="r-amount1"></td>
+                </tr>
+                <tr>
+                    <td id="r-description2"></td>
+                    <td id="r-amount2"></td>
+                </tr>
+                <tr>
+                    <td id="r-description3"></td>
+                    <td id="r-amount3"></td>
+                </tr>
+                <tr>
+                    <td class="text-right total">Total</td>
+                    <td class="total" id="r-total"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Payment Method:</strong> <span id="r-paymentMethod"></span></p>
+
+        <p><strong>Signature:</strong></p>
+        <div class="signature"></div>
+
+        <button class="btn btn-secondary" onclick="toggleSections()">Go Back</button>
     </div>
 </div>
 
 <script>
-
-document.addEventListener('DOMContentLoaded', function () {
-    // Get weather information
-    function getWeather() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-
-                // OpenWeatherMap API call
-                const apiKey = '2df2f2db86c791819de19980c828c7b5'; // Replace with your API key
-                const apiUrl = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${apiKey}&units=metric`;
-
-                fetch(apiUrl)
-                    .then(response => response.json())
-                    .then(data => {
-                        displayWeather(data);
-                        checkRainTime(data.hourly);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching weather data:', error);
-                    });
-            });
-        } else {
-            alert('Geolocation is not supported by your browser.');
-        }
+    // Toggle between form and receipt
+    function toggleSections() {
+        document.getElementById("form-section").classList.toggle("toggle-section");
+        document.getElementById("receipt-section").classList.toggle("toggle-section");
     }
 
-    function displayWeather(data) {
-        const locationName = 'Atwima'; // This could be dynamic based on user's location.
-        const currentTemp = Math.round(data.current.temp);
-        const weatherDescription = data.current.weather[0].description;
-        const highTemp = Math.round(data.daily[0].temp.max);
-        const lowTemp = Math.round(data.daily[0].temp.min);
+    // On form submit, generate the receipt
+    document.getElementById('receiptForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Get form values
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+        const address = document.getElementById('address').value;
+        const description1 = document.getElementById('description1').value;
+        const amount1 = parseFloat(document.getElementById('amount1').value).toFixed(2);
+        const description2 = document.getElementById('description2').value;
+        const amount2 = parseFloat(document.getElementById('amount2').value).toFixed(2);
+        const description3 = document.getElementById('description3').value;
+        const amount3 = parseFloat(document.getElementById('amount3').value).toFixed(2);
+        const paymentMethod = document.getElementById('paymentMethod').value;
 
-        document.getElementById('location').textContent = locationName;
-        document.getElementById('temperature').textContent = `${currentTemp}°`;
-        document.getElementById('condition').textContent = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);
-        document.getElementById('high-temp').textContent = highTemp;
-        document.getElementById('low-temp').textContent = lowTemp;
+        // Calculate total
+        const total = (parseFloat(amount1) + parseFloat(amount2) + parseFloat(amount3)).toFixed(2);
 
-        // Forecast
-        const forecastDiv = document.getElementById('forecast');
-        data.daily.slice(1, 4).forEach((day, index) => {
-            const forecastCard = document.createElement('div');
-            forecastCard.classList.add('forecast-card');
-            forecastCard.innerHTML = `
-                <div>${new Date(day.dt * 1000).toLocaleDateString('en', { weekday: 'short' })}</div>
-                <img src="http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png" alt="${day.weather[0].description}">
-                <div>${Math.round(day.temp.max)}°</div>
-            `;
-            forecastDiv.appendChild(forecastCard);
-        });
+        // Set receipt values
+        document.getElementById('r-name').textContent = name;
+        document.getElementById('r-phone').textContent = phone;
+        document.getElementById('r-email').textContent = email;
+        document.getElementById('r-address').textContent = address;
+        document.getElementById('r-description1').textContent = description1;
+        document.getElementById('r-amount1').textContent = '$' + amount1;
+        document.getElementById('r-description2').textContent = description2;
+        document.getElementById('r-amount2').textContent = '$' + amount2;
+        document.getElementById('r-description3').textContent = description3;
+        document.getElementById('r-amount3').textContent = '$' + amount3;
+        document.getElementById('r-total').textContent = '$' + total;
+        document.getElementById('r-paymentMethod').textContent = paymentMethod;
+        document.getElementById ('r-date').textContent = new Date().toLocaleDateString();
 
-        // If raining, animate rain
-        if (weatherDescription.includes('rain')) {
-            animateRain();
-        }
-    }
-
-    function animateRain() {
-        const rainAnimation = document.getElementById('rain-animation');
-        rainAnimation.style.opacity = 1;
-        rainAnimation.style.animation = 'rain 1s ease-in-out forwards';
-    }
-
-    function checkRainTime(hourlyData) {
-        // Loop through hourly data to check for upcoming rain
-        let rainTime = '';
-        hourlyData.forEach(hour => {
-            const rainChance = hour.pop; // Probability of precipitation (rain chance)
-            const weatherDescription = hour.weather[0].description;
-
-            if (rainChance > 0.4 && weatherDescription.includes('rain')) {
-                const time = new Date(hour.dt * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                rainTime = `Expected rain around ${time}`;
-                document.getElementById('forecast-text').textContent = rainTime;
-                return;
-            }
-        });
-
-        if (!rainTime) {
-            document.getElementById('forecast-text').textContent = 'No rain expected in the next few hours.';
-        }
-    }
-
-    getWeather();
+    // Toggle to receipt
+    toggleSections();
 });
 
+// Print the receipt
+function printReceipt() {
+    window.print();
+}
 </script>
 </body>
 </html>
